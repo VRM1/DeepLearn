@@ -110,6 +110,6 @@ if __name__ == '__main__':
     batch_size=512
     epochs = 70
     z_dim=100
-    name = data_typ[3]
+    name = data_typ[2]
     ld_weight = 'no'
     TrainAmazon(name,batch_size,z_dim,epochs,ld_weight)
