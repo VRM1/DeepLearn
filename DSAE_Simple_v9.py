@@ -41,9 +41,9 @@ def GetReviews(graph,doc2vec):
 def GetItmGraphs(name,typ):
     
     if typ=='binary':
-        end = '_2class_filtered.json'
+        end = '_graph_2class_filtered.json'
     else:
-        end = '_4class_filtered.json'
+        end = '_graph_4class_filtered.json'
     with open('dataset/'+name+end,'r') as fp:
         itm_pairs = json.load(fp)
     # we have two cases now (a) substitute and (b) complement
