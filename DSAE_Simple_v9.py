@@ -114,6 +114,8 @@ if __name__ == '__main__':
     batch_size=512
     epochs = 70
     z_dim=100
+    # the type of class label (1-> subs, 2-> complement, or the 4 type of classes with direction)
+    typ='binary'
     name = data_typ[2]
     ld_weight = 'no'
-    TrainAmazon(name,batch_size,z_dim,epochs,ld_weight)
+    TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ)
