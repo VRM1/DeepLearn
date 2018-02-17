@@ -38,9 +38,13 @@ def GetReviews(graph,doc2vec):
     return (itm_rev_a,itm_rev_b,pairs,labels)
 
 # method that return item-item relationship graph (i.e. substitute, complements etc)
-def GetItmGraphs(name):
+def GetItmGraphs(name,typ):
     
-    with open('dataset/'+name+'_graph_filtered.json','r') as fp:
+    if typ=='binary':
+        end = '_2class_filtered.json'
+    else:
+        end = '_4class_filtered.json'
+    with open('dataset/'+name+end,'r') as fp:
         itm_pairs = json.load(fp)
     # we have two cases now (a) substitute and (b) complement
     subs,compl,=[],[]
@@ -55,7 +59,7 @@ def GetItmGraphs(name):
     data = subs + compl
     return data
     
-def TrainAmazon(name,batch_size,z_dim,epochs,ld_weight):
+def TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ):
     
     # load the d2v trained model, which will serve as input to VAE
     d2v_model = gensim.models.doc2vec.Doc2Vec.load('dataset/'+name+'_reviews'+'.d2v')
@@ -65,7 +69,7 @@ def TrainAmazon(name,batch_size,z_dim,epochs,ld_weight):
     inpt_dim = len(d2v_model[0])
     # total number of unique words
     inter_dim = 256
-    graph_data = GetItmGraphs(name)
+    graph_data = GetItmGraphs(name,typ)
     print 'total item pairs:{}, total item with reviews:{}'\
             .format(len(graph_data),len(d2v_model.docvecs))
     # 3K samples for train and 1k for test
