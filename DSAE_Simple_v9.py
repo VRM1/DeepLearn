@@ -38,12 +38,10 @@ def GetReviews(graph,doc2vec):
     return (itm_rev_a,itm_rev_b,pairs,labels)
 
 # method that return item-item relationship graph (i.e. substitute, complements etc)
-def GetItmGraphs(name,typ):
+def GetItmGraphsBinary(name):
     
-    if typ=='binary':
-        end = '_graph_2class_filtered.json'
-    else:
-        end = '_graph_4class_filtered.json'
+
+    end = '_graph_2class_filtered.json'
     with open('dataset/'+name+end,'r') as fp:
         itm_pairs = json.load(fp)
     # we have two cases now (a) substitute and (b) complement
@@ -54,9 +52,44 @@ def GetItmGraphs(name,typ):
             subs.append(','.join(tmp_pairs)+',1')
         else:
             compl.append(','.join(tmp_pairs)+',0')
-    subs = subs[:2500000]
-    compl = compl[:5000000]
+#     subs = subs[:2500000]
+#     compl = compl[:5000000]
     data = subs + compl
+    return data
+
+'''
+The categorical link is based on the following rules described in the paper
+1."Users who viewed x also viewed y"
+2."Users who viewed x eventually bought y"
+3."Users who bought x also bought y"
+4."Users frequently bought x and y together"
+'''
+def GetItmGraphsCateg(name):
+    
+
+    end = '_graph_4class_filtered.json'
+    with open('dataset/'+name+end,'r') as fp:
+        itm_pairs = json.load(fp)
+    # we have two cases now (a) substitute and (b) complement
+    vu_x_also_y,vu_x_even_y,=[],[]
+    bt_x_also_y,bt_x_n_y,=[],[]
+    for itms in tqdm(itm_pairs):
+        tmp_pairs = [i.strip() for i in itms.strip('(|)').split(',')]
+        if itm_pairs[itms] == 1:
+            vu_x_also_y.append(','.join(tmp_pairs)+',1')
+        elif itm_pairs[itms] == 2:
+            vu_x_even_y.append(','.join(tmp_pairs)+',2')
+        elif itm_pairs[itms] == 3:
+            bt_x_also_y.append(','.join(tmp_pairs)+',3')
+        else:
+            bt_x_n_y.append(','.join(tmp_pairs)+',4')
+#     subs = subs[:2500000]
+#     compl = compl[:5000000]
+    data = vu_x_also_y + vu_x_even_y + bt_x_also_y + bt_x_n_y
+    print '1. Users who viewed x also viewed y: {}'.format(len(vu_x_also_y))
+    print '2. Users who viewed x eventually bought y:{}'.format(len(vu_x_also_y))
+    print '3. Users who viewed x eventually bought y:{}'.format(len(bt_x_also_y))
+    print '4. Users who viewed x eventually bought y:{}'.format(len(bt_x_n_y))
     return data
     
 def TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ):
@@ -69,7 +102,10 @@ def TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ):
     inpt_dim = len(d2v_model[0])
     # total number of unique words
     inter_dim = 256
-    graph_data = GetItmGraphs(name,typ)
+    if typ == 'binary':
+        graph_data = GetItmGraphsBinary(name)
+    else:
+        graph_data = GetItmGraphsCateg(name)
     print 'total item pairs:{}, total item with reviews:{}'\
             .format(len(graph_data),len(d2v_model.docvecs))
     # 3K samples for train and 1k for test
@@ -87,7 +123,7 @@ def TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ):
     valid_labels = encodeLabels(valid_labels)
     labels_test = encodeLabels(test_labels)
     # get the models
-    dsae = DSAEB(name,inter_dim, z_dim, inpt_dim,batch_size)
+    dsae = DSAEB(name,inter_dim, z_dim, inpt_dim,batch_size,typ)
     DSAE,LinkPredictor,cp = dsae.getModels()
     if ld_weight == 'yes':
         weights_path = 'output/DSAE_'+name+'.hdf5'
@@ -115,7 +151,7 @@ if __name__ == '__main__':
     epochs = 70
     z_dim=100
     # the type of class label (1-> subs, 2-> complement, or the 4 type of classes with direction)
-    typ='binary'
-    name = data_typ[2]
+    typ=['binary','categorical']
+    name = data_typ[3]
     ld_weight = 'no'
-    TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ)
+    TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ[0])
