@@ -153,6 +153,6 @@ if __name__ == '__main__':
     z_dim=100
     # the type of class label (1-> subs, 2-> complement, or the 4 type of classes with direction)
     typ=['binary','categorical']
-    name = data_typ[0]
+    name = data_typ[1]
     ld_weight = 'no'
     TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ[0])
