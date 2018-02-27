@@ -55,6 +55,8 @@ def GetItmGraphsBinary(name):
 #     subs = subs[:2500000]
 #     compl = compl[:5000000]
     data = subs + compl
+    print '% of substitutes:{}'.format(len(subs)/float(len(data)))
+    print '% of complements:{}'.format(len(compl)/float(len(data)))
     return data
 
 '''
@@ -136,7 +138,6 @@ def TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ):
                  validation_data=[[np.array(valid_a),np.array(valid_b)],\
                                   [np.array(valid_a),np.array(valid_b),valid_labels]], \
                  callbacks=cp)
-      
     
     results = LinkPredictor.evaluate(x=[np.array(test_a),np.array(test_b)],y=[labels_test])
     print results
