@@ -146,7 +146,7 @@ if __name__ == '__main__':
     
     ''' max length of each review is 200 after the filtration.
     So, we use this for padding.'''
-    data_typ = ['Musical_Instruments','Electronics','Movies_and_TV','Books']
+    data_typ = ['Musical_Instrument','Electronics','Movies_and_TV','Books']
     batch_size=512
     epochs = 70
     z_dim=100
