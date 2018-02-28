@@ -217,7 +217,7 @@ class DSAEB:
         #     Compile the autoencoder computation graph
         LinkPredictor = Model(inputs=[LVAE.inputs[0],LVAE.inputs[1]],outputs=[LVAE.outputs[2]])
         # the generator model
-        LinkGenerator = Model(inputs=[generator_a.inputs[0], generator_b.inputs[0]],outputs=[LVAE.outputs[2]])
+        # LinkGenerator = Model(inputs=[generator_a.inputs[0], generator_b.inputs[0]],outputs=[LVAE.outputs[2]])
         # model for evaluation
         LVAE.compile(optimizer="adam", loss=[self._dsae_loss(z_mean_a,z_vari_a), \
                                              self._dsae_loss(z_mean_b,z_vari_b),\
@@ -226,10 +226,10 @@ class DSAEB:
         cp = [ModelCheckpoint(filepath='output/DSAE_'+self.name+'.hdf5', verbose=1, monitor='val_loss', mode='min',\
                               save_best_only=True)]
         LinkPredictor.compile(optimizer="adam", loss='binary_crossentropy',metrics=['accuracy'])
-        plot_model(DSAE,to_file='LVAE.png',show_shapes=True)
+        plot_model(LVAE,to_file='LVAE.png',show_shapes=True)
         plot_model(LinkPredictor,to_file='LinkPredictor.png',show_shapes=True)
-        plot_model(LinkGenerator,to_file='LinkGenerator.png',show_shapes=True)
-        return (LVAE,LinkPredictor,cp,LinkGenerator)
+        plot_model(generator_a,to_file='LinkGenerator.png',show_shapes=True)
+        return (LVAE,LinkPredictor,cp,generator_a)
     
     def TestVAE(self):
         
