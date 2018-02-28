@@ -55,7 +55,6 @@ def GetItmGraphsBinary(name):
 #     subs = subs[:2500000]
 #     compl = compl[:5000000]
     data = subs + compl
-    print 'ok'
     print '% of substitutes:{:.2f}'.format(len(subs)/float(len(data))*100)
     print '% of complements:{:.2f}'.format(len(compl)/float(len(data))*100)
     return data
