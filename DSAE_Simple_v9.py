@@ -88,10 +88,10 @@ def GetItmGraphsCateg(name):
 #     subs = subs[:2500000]
 #     compl = compl[:5000000]
     data = vu_x_also_y + vu_x_even_y + bt_x_also_y + bt_x_n_y
-    print '1. Users who viewed x also viewed y: {}'.format(len(vu_x_also_y))
-    print '2. Users who viewed x eventually bought y:{}'.format(len(vu_x_also_y))
-    print '3. Users who viewed x eventually bought y:{}'.format(len(bt_x_also_y))
-    print '4. Users who viewed x eventually bought y:{}'.format(len(bt_x_n_y))
+    print '1. % Users who viewed x also viewed y: {}'.format(len(vu_x_also_y)/float(len(data)))
+    print '2. % Users who viewed x eventually bought y:{}'.format(len(vu_x_also_y)/float(len(data)))
+    print '3. % Users who viewed x eventually bought y:{}'.format(len(bt_x_also_y)/float(len(data)))
+    print '4. % Users who viewed x eventually bought y:{}'.format(len(bt_x_n_y)/float(len(data)))
     return data
     
 def TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ):
