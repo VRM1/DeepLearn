@@ -167,14 +167,8 @@ class DSAEB:
         vae = Model(x,x_decoded_mean)
         # create just the encoder
         encoder = Model(x, z_mean)
-
-        # generator, from latent space to reconstructed inputs
-        decoder_input = Input(shape=(self.z_dim,))
-        _h_decoded = decoded_g(decoder_input)
-        _x_decoded_mean = decoded_mean(_h_decoded)
-        generator = Model(decoder_input, _x_decoded_mean)
     
-        return (vae,x,z_mean,z_vari,z,x_decoded_mean,encoder,generator)
+        return (vae,x,z_mean,z_vari,z,x_decoded_mean,encoder)
 
 
     def _SampleZ(self, args,epsilon_std,latent_dim,batch_size):
