@@ -217,8 +217,7 @@ class DSAEB:
         #     Compile the autoencoder computation graph
         LinkPredictor = Model(inputs=[LVAE.inputs[0],LVAE.inputs[1]],outputs=[LVAE.outputs[2]])
         # the generator model
-        LinkGenerator = Model(inputs=[generator_a.inputs[0], generator_b.inputs[0]],\
-                              outputs=[generator_a.outputs[0],generator_b.outputs[0],classifier_nn])
+        LinkGenerator = Model(inputs=[generator_a.inputs[0], generator_b.inputs[0]],outputs=[LVAE.outputs[2]])
         # model for evaluation
         LVAE.compile(optimizer="adam", loss=[self._dsae_loss(z_mean_a,z_vari_a), \
                                              self._dsae_loss(z_mean_b,z_vari_b),\
