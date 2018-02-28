@@ -126,7 +126,7 @@ def TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ):
     labels_test = encodeLabels(test_labels)
     # get the models
     dsae = DSAEB(name,inter_dim, z_dim, inpt_dim,batch_size,typ)
-    DSAE,LinkPredictor,cp = dsae.getModels()
+    DSAE,LinkPredictor,cp,LinkGenerator = dsae.getModels()
     if ld_weight == 'yes':
         weights_path = 'output/DSAE_'+name+'.hdf5'
         DSAE.load_weights(weights_path)
@@ -139,8 +139,8 @@ def TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ):
                                   [np.array(valid_a),np.array(valid_b),valid_labels]], \
                  callbacks=cp)
     
-    results = LinkPredictor.evaluate(x=[np.array(test_a),np.array(test_b)],y=[labels_test])
-    print results
+    # results = LinkPredictor.evaluate(x=[np.array(test_a),np.array(test_b)],y=[labels_test])
+    # print results
      
 
 if __name__ == '__main__':

@@ -170,10 +170,10 @@ class DSAEB:
 
         # generator, from latent space to reconstructed inputs
         decoder_input = Input(shape=(self.z_dim,))
-        _h_decoded = decoded_g(decoder_input)
-        _x_decoded_mean = decoded_mean(_h_decoded)
+        _g_decoded = decoded_g(decoder_input)
+        _x_decoded_mean = decoded_mean(_g_decoded)
         generator = Model(decoder_input, _x_decoded_mean)
-    
+
         return (vae,x,z_mean,z_vari,z,x_decoded_mean,encoder,generator)
 
 
@@ -205,31 +205,32 @@ class DSAEB:
     def getModels(self):
         
         # create the first VAE model (i.e., vae_a)
-        vae_a,x_a,z_mean_a,z_vari_a,z_a,x_decoded_mean,encoder = self.VAE()
+        vae_a,x_a,z_mean_a,z_vari_a,z_a,x_decoded_mean,encoder,generator_a = self.VAE()
         #     create the second VAE model (i.e., vae_b)
-        vae_b,x_b,z_mean_b,z_vari_b,z_b,x_decoded_mean,encoder = self.VAE()
+        vae_b,x_b,z_mean_b,z_vari_b,z_b,x_decoded_mean,encoder,generator_b = self.VAE()
         # create the classifier neural network
         classifier_nn = self._ClassifierNN(z_a,z_b)
         # create the complete model
-        DSAE = Model(inputs=[vae_a.inputs[0],vae_b.inputs[0]],\
+        LVAE = Model(inputs=[vae_a.inputs[0],vae_b.inputs[0]],\
                      outputs=[vae_a.outputs[0],vae_b.outputs[0],classifier_nn])
         
         #     Compile the autoencoder computation graph
-        LinkPredictor = Model(inputs=[DSAE.inputs[0],DSAE.inputs[1]],outputs=[DSAE.outputs[2]])
+        LinkPredictor = Model(inputs=[LVAE.inputs[0],LVAE.inputs[1]],outputs=[LVAE.outputs[2]])
+        # the generator model
+        LinkGenerator = Model(inputs=[generator_a.inputs[0], generator_b.inputs[0]],\
+                              outputs=[vae_a.outputs[0],vae_b.outputs[0],classifier_nn])
         # model for evaluation
-        DSAE.compile(optimizer="adam", loss=[self._dsae_loss(z_mean_a,z_vari_a), \
+        LVAE.compile(optimizer="adam", loss=[self._dsae_loss(z_mean_a,z_vari_a), \
                                              self._dsae_loss(z_mean_b,z_vari_b),\
                                              'binary_crossentropy'], loss_weights=[0.3,0.3,0.9])
-        
-#         DSAE.compile(optimizer="adam", loss=[self._dsae_loss(z_mean_a,z_vari_a), \
-#                                              self._dsae_loss(z_mean_b,z_vari_b),\
-#                                              'binary_crossentropy'])
+
         cp = [ModelCheckpoint(filepath='output/DSAE_'+self.name+'.hdf5', verbose=1, monitor='val_loss', mode='min',\
                               save_best_only=True)]
         LinkPredictor.compile(optimizer="adam", loss='binary_crossentropy',metrics=['accuracy'])
-#         plot_model(DSAE,to_file='DSAE.png',show_shapes=True)
-#         plot_model(LinkPredictor,to_file='LinkPredictor.png',show_shapes=True)
-        return (DSAE,LinkPredictor,cp)
+        plot_model(DSAE,to_file='LVAE.png',show_shapes=True)
+        plot_model(LinkPredictor,to_file='LinkPredictor.png',show_shapes=True)
+        plot_model(LinkGenerator,to_file='LinkGenerator.png',show_shapes=True)
+        return (LVAE,LinkPredictor,cp,LinkGenerator)
     
     def TestVAE(self):
         
