@@ -52,8 +52,8 @@ def GetItmGraphsBinary(name):
             subs.append(','.join(tmp_pairs)+',1')
         else:
             compl.append(','.join(tmp_pairs)+',0')
-#     subs = subs[:2500000]
-#     compl = compl[:5000000]
+    subs = subs[:500]
+    compl = compl[:500]
     data = subs + compl
     print '% of substitutes:{:.2f}'.format(len(subs)/float(len(data))*100)
     print '% of complements:{:.2f}'.format(len(compl)/float(len(data))*100)
@@ -155,4 +155,4 @@ if __name__ == '__main__':
     typ=['binary','categorical']
     name = data_typ[0]
     ld_weight = 'yes'
-    TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ[1])
+    TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ[0])
