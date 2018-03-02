@@ -139,9 +139,9 @@ class DSAEB:
         cp = [ModelCheckpoint(filepath='output/DSAE_'+self.name+'.hdf5', verbose=1, monitor='val_loss', mode='min',\
                               save_best_only=True)]
         LinkPredictor.compile(optimizer="adam", loss='binary_crossentropy',metrics=['accuracy'])
-        plot_model(LVAE,to_file='LVAE-end-to-end.png',show_shapes=True)
-        plot_model(LinkPredictor,to_file='LinkPredictor.png',show_shapes=True)
-        plot_model(LinkGenerator,to_file='LinkGenerator.png',show_shapes=True)
+        # plot_model(LVAE,to_file='LVAE-end-to-end.png',show_shapes=True)
+        # plot_model(LinkPredictor,to_file='LinkPredictor.png',show_shapes=True)
+        # plot_model(LinkGenerator,to_file='LinkGenerator.png',show_shapes=True)
         return (LVAE,LinkPredictor,cp,generator_a)
     
     def TestVAE(self):
