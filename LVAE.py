@@ -6,6 +6,7 @@ from keras.utils import np_utils
 from sklearn.model_selection import train_test_split
 from DSAE import DSAEB
 import gensim
+import sys
 np.random.seed(7)
 ''' This DSAE model is for using the NON - embedding layer version of the model'''
     
@@ -110,6 +111,7 @@ def TrainAmazon(name,batch_size,z_dim,epochs,ld_weight,typ):
         graph_data = GetItmGraphsCateg(name)
     print 'total item pairs:{}, total item with reviews:{}'\
             .format(len(graph_data),len(d2v_model.docvecs))
+    sys.exit(1)
     # 3K samples for train and 1k for test
     train,test = train_test_split(graph_data,train_size=0.75)
     train,validation = train_test_split(train,train_size=0.80)
